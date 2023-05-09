@@ -15,9 +15,9 @@ import (
 )
 
 var (
-	port        int64
-	service     string
-	dest_server string
+	port       int64
+	service    string
+	destServer string
 )
 
 func init() {
@@ -32,8 +32,8 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
-	dest_server = envs["DEST_SERVER"]
-	if dest_server == "" {
+	destServer = envs["DEST_SERVER"]
+	if destServer == "" {
 		log.Fatal("Ensure you have a valid .env file with DEST_SERVER variable")
 	}
 }
@@ -55,7 +55,7 @@ func serveReverseProxy(res http.ResponseWriter, req *http.Request, target string
 func main() {
 	if service == "" {
 		fmt.Println("Please provide a service name (e.g. postgresql)")
-		fmt.Println(dest_server)
+		fmt.Println(destServer)
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -70,7 +70,7 @@ func main() {
 	}))
 
 	router.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		newpath := dest_server + ":9999" + r.URL.String()
+		newpath := destServer + ":9999" + r.URL.String()
 		log.Printf("%s -> %s\n", r.URL.String(), newpath)
 		serveReverseProxy(w, r, newpath)
 	}))
