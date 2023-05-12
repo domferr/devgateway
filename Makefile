@@ -7,3 +7,21 @@ build-linux:
 
 run:
 	./${EXECUTABLE}
+
+start-postgresql:
+	./${EXECUTABLE} -service postgresql
+
+start-mysql:
+	./${EXECUTABLE} -service mysql
+
+start-mongodb:
+	./${EXECUTABLE} -service mongodb
+
+start-oracledb:
+	./${EXECUTABLE} -service oracledb
+
+start-harperdb:
+	./${EXECUTABLE} -service harperdb
+
+start-sqlserver:
+	./${EXECUTABLE} -service sqlserver
