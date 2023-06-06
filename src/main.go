@@ -44,6 +44,7 @@ func serveReverseProxy(res http.ResponseWriter, req *http.Request, target string
 	proxy := &httputil.ReverseProxy{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSNextProto:    make(map[string]func(authority string, c *tls.Conn) http.RoundTripper),
 		},
 		Director: func(req *http.Request) {
 			req.URL = parsedUrl
@@ -77,10 +78,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    fmt.Sprintf("127.0.0.1:%d", port),
+		Addr:    fmt.Sprintf("localhost:%d", port),
 	}
 
 	fmt.Printf("Redirecting /%s/* requests to http://localhost:8080/*\n", service)
 	fmt.Printf("Running dev gateway on %s\n", srv.Addr)
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal(srv.ListenAndServeTLS("./server.crt", "./server.key"))
 }
