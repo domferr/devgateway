@@ -25,3 +25,9 @@ start-harperdb:
 
 start-sqlserver:
 	./${EXECUTABLE} -service sqlserver
+
+start-balancer:
+	./${EXECUTABLE} -service balancer -service.port 9519
+
+start-nodemanager:
+	./${EXECUTABLE} -service nodemanager -service.port 9219

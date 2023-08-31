@@ -15,14 +15,16 @@ import (
 )
 
 var (
-	port       int64
-	service    string
-	destServer string
+	port        int64
+	service     string
+	servicePort string
+	destServer  string
 )
 
 func init() {
 	flag.Int64Var(&port, "port", 9999, "port to listen to")
 	flag.StringVar(&service, "service", "", "service which is running on localhost")
+	flag.StringVar(&servicePort, "service.port", "8080", "port of the service which is running on localhost")
 	flag.Parse()
 
 	var envs map[string]string
@@ -65,7 +67,7 @@ func main() {
 
 	router.PathPrefix(fmt.Sprintf("/%s/", service)).Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		newpath := strings.TrimPrefix(r.URL.String(), "/"+service)
-		newpath = "http://localhost:8080/" + strings.TrimPrefix(newpath, "/")
+		newpath = "http://localhost:" + servicePort + "/" + strings.TrimPrefix(newpath, "/")
 		log.Printf("%s -> %s\n", r.URL.String(), newpath)
 		serveReverseProxy(w, r, newpath)
 	}))
@@ -81,7 +83,7 @@ func main() {
 		Addr:    fmt.Sprintf("localhost:%d", port),
 	}
 
-	fmt.Printf("Redirecting /%s/* requests to http://localhost:8080/*\n", service)
+	fmt.Printf("Redirecting /%s/* requests to http://localhost:%s/*\n", service, servicePort)
 	fmt.Printf("Running dev gateway on %s\n", srv.Addr)
 	log.Fatal(srv.ListenAndServeTLS("./server.crt", "./server.key"))
 }
